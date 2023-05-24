@@ -33,9 +33,13 @@ int main(int argc, char* argv[]) {
 	
 	cout << "Aplicando filtros" << endl;
 
-	if (filter == "plain")
+	if (filter == "plain") {
 		plain(img, (unsigned char)p1);   // Aplica el filtro "plain" a la imagen utilizando el valor de "p1" como parámetro
-
+	} else if(filter == "blackWhite") {
+		blackWhite(img);
+	} else if(filter == "shades") {
+		shades(img, p1);
+	}
 	cout << "Escribiendo imagen" << endl;
 	img.write(out);                      // Escribe la imagen resultante en el archivo especificado por "out"	
 	
