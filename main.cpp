@@ -39,6 +39,8 @@ int main(int argc, char* argv[]) {
 		blackWhite(img);
 	} else if(filter == "shades") {
 		shades(img, p1);
+	} else if(filter == "brightness") {
+		brightness(img, p1, 0, 0);
 	}
 	cout << "Escribiendo imagen" << endl;
 	img.write(out);                      // Escribe la imagen resultante en el archivo especificado por "out"	

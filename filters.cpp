@@ -31,11 +31,20 @@ void blackWhite(ppm& img) {
 }
 
 void contrast(ppm& img, float contrast) {
-
+    
 }
 
 void brightness(ppm& img, float b, int start, int end) {
-
+    for(int i = 0; i < img.height; i++) {
+        for(int j = 0; j < img.width; j++) {
+            pixel p = img.getPixel(i, j);
+            int nr = p.r + 255*b;
+            int ng = p.g + 255*b;
+            int nb = p.b + 255*b;
+            pixel np(nr, ng, nb);		
+            img.setPixel(i, j, np.truncate());
+        }
+    }
 }
 
 void shades(ppm& img, unsigned char shades) {
