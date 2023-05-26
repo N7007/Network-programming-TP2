@@ -98,8 +98,29 @@ void boxBlur(ppm &img) {
     }
 }
 
-void edgeDetection(ppm &img, ppm &img_target) {
+void edgeDetection(ppm &img) {
+    blackWhite(img);
+    boxBlur(img);
     
+}
+
+void sharpen(ppm &img) {
+    int kernel[] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
+    for(int i = 1; i < img.height-1; i++) {
+        for(int j = 1; j < img.width-1; j++) {
+            pixel pixels[] = {
+                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
+                img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
+                img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
+            };
+            pixel np;
+            for(int k = 0; k < 9; k++) {
+                pixels[k].mult(kernel[k]);
+                np.addp(pixels[k]);
+            }
+            img.setPixel(i, j, np);
+        }
+    }
 }
 // COMPLETAR :)
 
