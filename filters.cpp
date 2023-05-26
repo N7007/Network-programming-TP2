@@ -60,6 +60,43 @@ void shades(ppm& img, unsigned char shades) {
     }
 }
 
+void merge(ppm& img1, ppm& img2, float alpha) {
+    for(int i = 0; i < img1.height; i++) {
+        for(int j = 0; j < img1.width; j++) {
+            pixel p1 = img1.getPixel(i, j);
+            pixel p2 = img2.getPixel(i, j);
+            int nr = (int)(p1.r*alpha+p2.r*(1-alpha));
+            int ng = (int)(p1.g*alpha+p2.g*(1-alpha));
+            int nb = (int)(p1.b*alpha+p2.b*(1-alpha));
+            pixel np(nr,ng, nb);
+            img1.setPixel(i, j, np);
+        }
+    }
+}
+
+void frame(ppm& img, pixel color, int x) {
+
+}
+
+void boxBlur(ppm &img) {
+    float kernel[] = {1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9};
+    for(int i = 1; i < img.height-1; i++) {
+        for(int j = 1; j < img.width-1; j++) {
+            pixel pixels[] = {
+                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
+                img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
+                img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
+            };
+            pixel np;
+            for(int k = 0; k < 9; k++) {
+                pixels[k].mult(kernel[k]);
+                np.addp(pixels[k]);
+            }   
+            //pixels[0].addp(pixels[1].addp(pixels[2].addp(pixels[3].addp(pixels[4].addp(pixels[5].addp(pixels[6].addp(pixels[7].addp(pixels[8]))))))));
+            img.setPixel(i, j, np);
+        }
+    }
+}
 
 
 // COMPLETAR :)

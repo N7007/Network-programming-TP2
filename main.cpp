@@ -27,10 +27,12 @@ int main(int argc, char* argv[]) {
 	unsigned int n = atoi(argv[2]);     // Convierte el segundo argumento a un entero sin signo y lo almacena en "n"
 	float p1 = atof(argv[3]);           // Convierte el tercer argumento a un número de punto flotante y lo almacena en "p1"
 	string img1(argv[4]);                // Crea un objeto de tipo string llamado "img1" inicializado con el cuarto argumento
+	string img2(argv[7]);
 	string out = string(argv[5]);        // Crea un objeto de tipo string llamado "out" inicializado con el quinto argumento
 	
 	ppm img(img1);                       // Crea un objeto de tipo "ppm" llamado "img" y lo inicializa con el valor de "img1"
-	
+	ppm img_2(img2);
+
 	cout << "Aplicando filtros" << endl;
 
 	if (filter == "plain") {
@@ -41,6 +43,10 @@ int main(int argc, char* argv[]) {
 		shades(img, p1);
 	} else if(filter == "brightness") {
 		brightness(img, p1, 0, 0);
+	} else if(filter == "merge") {
+		merge(img, img_2, p1);
+	} else if(filter == "boxBlur") {
+		boxBlur(img);
 	}
 	cout << "Escribiendo imagen" << endl;
 	img.write(out);                      // Escribe la imagen resultante en el archivo especificado por "out"	
