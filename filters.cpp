@@ -98,7 +98,9 @@ void boxBlur(ppm &img) {
     }
 }
 
-
+void edgeDetection(ppm &img, ppm &img_target) {
+    
+}
 // COMPLETAR :)
 
 
