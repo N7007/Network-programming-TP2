@@ -47,9 +47,11 @@ int main(int argc, char* argv[]) {
 		merge(img, img_2, p1);
 	} else if(filter == "boxBlur") {
 		boxBlur(img); 
+	} else if (filter == "edgeDetection") {
+		edgeDetection(img);
 	} else if(filter == "sharpen") {
 		sharpen(img);
-	}
+	} 
 	cout << "Escribiendo imagen" << endl;
 	img.write(out);                      // Escribe la imagen resultante en el archivo especificado por "out"	
 	

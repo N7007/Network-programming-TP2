@@ -6,6 +6,7 @@
 #include "filters.h"
 #include <thread>  
 #include <atomic>  
+#include <cmath>
 
 #define BLACK 0
 
@@ -82,12 +83,12 @@ void boxBlur(ppm &img) {
     float kernel[] = {1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9, 1.0 / 9};
     for(int i = 1; i < img.height-1; i++) {
         for(int j = 1; j < img.width-1; j++) {
+            pixel np;
             pixel pixels[] = {
                 img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
                 img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
                 img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
             };
-            pixel np;
             for(int k = 0; k < 9; k++) {
                 pixels[k].mult(kernel[k]);
                 np.addp(pixels[k]);
@@ -101,19 +102,56 @@ void boxBlur(ppm &img) {
 void edgeDetection(ppm &img) {
     blackWhite(img);
     boxBlur(img);
-    
-}
-
-void sharpen(ppm &img) {
-    int kernel[] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
+    int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
+    int kernel_t[] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
     for(int i = 1; i < img.height-1; i++) {
         for(int j = 1; j < img.width-1; j++) {
+            pixel np;
+            pixel temp;
+            pixel temp_d;
             pixel pixels[] = {
                 img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
                 img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
                 img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
             };
+            pixel pixels_s[] = {
+                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
+                img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
+                img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
+            };
+            for(int k = 0; k < 9; k++) {
+                pixels[k].mult(kernel[k]);
+                temp.addp(pixels[k]);
+                pixels_s[k].mult(kernel_t[k]);
+                temp_d.addp(pixels_s[k]);
+            }
+            // /*
+            temp.r = temp.r * temp.r;
+            temp.g = temp.g * temp.g;
+            temp.b = temp.b * temp.b;
+            temp_d.r = temp_d.r * temp_d.r;
+            temp_d.g = temp_d.g * temp_d.g;
+            temp_d.b = temp_d.b * temp_d.b;
+            np = temp.addp(temp_d);
+            np.r = sqrt(np.r);
+            np.g = sqrt(np.g);
+            np.b = sqrt(np.b);
+            // /*
+            img.setPixel(i, j, np);
+        }
+    }
+}
+
+void sharpen(ppm &img) {
+    float kernel[] = {0.0f, -1.0f, 0.0f, -1.0f, 5.0f, -1.0f, 0.0f, -1.0f, 0.0};
+    for(int i = 1; i < img.height-1; i++) {
+        for(int j = 1; j < img.width-1; j++) {
             pixel np;
+            pixel pixels[] = {
+                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
+                img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
+                img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
+            };
             for(int k = 0; k < 9; k++) {
                 pixels[k].mult(kernel[k]);
                 np.addp(pixels[k]);
@@ -122,6 +160,8 @@ void sharpen(ppm &img) {
         }
     }
 }
+
+
 // COMPLETAR :)
 
 
