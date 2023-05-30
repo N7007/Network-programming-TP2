@@ -102,6 +102,8 @@ void boxBlur(ppm &img) {
 void edgeDetection(ppm &img) {
     blackWhite(img);
     boxBlur(img);
+    ppm image = img;
+    ppm image_s = img;
     int kernel[] = {1, 0, -1, 2, 0, -2, 1, 0, -1};
     int kernel_t[] = {1, 2, 1, 0, 0, 0, -1, -2, -1};
     for(int i = 1; i < img.height-1; i++) {
@@ -110,14 +112,14 @@ void edgeDetection(ppm &img) {
             pixel temp;
             pixel temp_d;
             pixel pixels[] = {
-                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
-                img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
-                img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
+                image.getPixel(i - 1, j - 1), image.getPixel(i - 1, j), image.getPixel(i - 1, j + 1),
+                image.getPixel(i, j - 1), image.getPixel(i, j), image.getPixel(i, j + 1),
+                image.getPixel(i + 1, j - 1), image.getPixel(i + 1, j), image.getPixel(i + 1, j + 1)
             };
             pixel pixels_s[] = {
-                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
-                img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
-                img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
+                image_s.getPixel(i - 1, j - 1), image_s.getPixel(i - 1, j), image_s.getPixel(i - 1, j + 1),
+                image_s.getPixel(i, j - 1), image_s.getPixel(i, j), image_s.getPixel(i, j + 1),
+                image_s.getPixel(i + 1, j - 1), image_s.getPixel(i + 1, j), image_s.getPixel(i + 1, j + 1)
             };
             for(int k = 0; k < 9; k++) {
                 pixels[k].mult(kernel[k]);
