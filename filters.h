@@ -11,17 +11,17 @@
 
 // FILTROS SINGLE-THREAD
 
-void blackWhite(ppm& img);
-void contrast(ppm& img, float contrast);
-void brightness(ppm& img, float b, int start, int end);
-void shades(ppm& img, unsigned char shades);
+void blackWhite(ppm& img); //implementado
+void contrast(ppm& img, float contrast); 
+void brightness(ppm& img, float b, int start, int end); //implementado
+void shades(ppm& img, unsigned char shades); //implementado
 void merge(ppm& img1, ppm& img2, float alpha);
-void frame(ppm& img, pixel color, int x);
-void boxBlur(ppm &img);
-void zoom(ppm &img, ppm &img_zoomed, int n);
-void edgeDetection(ppm &img);
-void sharpen(ppm &img);
-void plain(ppm &img, unsigned char c);
+void boxBlur(ppm &img); //implementado
+void edgeDetection(ppm &img); //implementado
+void sharpen(ppm &img); //implementado
+void plain(ppm &img, unsigned char c); //implementado
+//void frame(ppm& img, pixel color, int x);
+//void zoom(ppm &img, ppm &img_zoomed, int n);
 
 // FILTROS MULTI-THREAD
 

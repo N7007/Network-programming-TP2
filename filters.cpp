@@ -31,8 +31,19 @@ void blackWhite(ppm& img) {
     }
 }
 
+int filtro(int c) {
+    int x = (259*(c+255)) / (255*(259-c));
+    return x;
+}
+
 void contrast(ppm& img, float contrast) {
-    
+    for(int i = 0; i < img.height; i++) {
+        for(int j = 0; j < img.width; j++) {
+            int r = filtro(img.getPixel(i, j).r - 128) + 128;
+            int g = filtro(img.getPixel(i, j).g - 128) + 128;
+            int b = filtro(img.getPixel(i, j).b - 128) + 128;
+        }
+    }
 }
 
 void brightness(ppm& img, float b, int start, int end) {
@@ -62,21 +73,18 @@ void shades(ppm& img, unsigned char shades) {
 }
 
 void merge(ppm& img1, ppm& img2, float alpha) {
+
     for(int i = 0; i < img1.height; i++) {
         for(int j = 0; j < img1.width; j++) {
             pixel p1 = img1.getPixel(i, j);
             pixel p2 = img2.getPixel(i, j);
-            int nr = (int)(p1.r*alpha+p2.r*(1-alpha));
-            int ng = (int)(p1.g*alpha+p2.g*(1-alpha));
-            int nb = (int)(p1.b*alpha+p2.b*(1-alpha));
+            int nr = (p1.r*alpha+p2.r*(1-alpha));
+            int ng = (p1.g*alpha+p2.g*(1-alpha));
+            int nb = (p1.b*alpha+p2.b*(1-alpha));
             pixel np(nr,ng, nb);
             img1.setPixel(i, j, np);
         }
     }
-}
-
-void frame(ppm& img, pixel color, int x) {
-
 }
 
 void boxBlur(ppm &img) {
@@ -127,7 +135,7 @@ void edgeDetection(ppm &img) {
                 pixels_s[k].mult(kernel_t[k]);
                 temp_d.addp(pixels_s[k]);
             }
-            // /*
+            // /*   
             temp.r = temp.r * temp.r;
             temp.g = temp.g * temp.g;
             temp.b = temp.b * temp.b;
@@ -145,7 +153,7 @@ void edgeDetection(ppm &img) {
 }
 
 void sharpen(ppm &img) {
-    float kernel[] = {0.0f, -1.0f, 0.0f, -1.0f, 5.0f, -1.0f, 0.0f, -1.0f, 0.0};
+    int kernel[] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
     for(int i = 1; i < img.height-1; i++) {
         for(int j = 1; j < img.width-1; j++) {
             pixel np;
@@ -158,6 +166,7 @@ void sharpen(ppm &img) {
                 pixels[k].mult(kernel[k]);
                 np.addp(pixels[k]);
             }
+            np.truncate();
             img.setPixel(i, j, np);
         }
     }
