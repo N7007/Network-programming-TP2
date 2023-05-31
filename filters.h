@@ -15,7 +15,7 @@ void blackWhite(ppm& img); //implementado
 void contrast(ppm& img, float contrast); //implementado
 void brightness(ppm& img, float b, int start, int end); //implementado
 void shades(ppm& img, unsigned char shades); //implementado
-void merge(ppm& img1, ppm& img2, float alpha);
+void merge(ppm& img1, ppm& img2, float alpha); //implementado
 void boxBlur(ppm &img); //implementado
 void edgeDetection(ppm &img); //implementado
 void sharpen(ppm &img); //implementado
