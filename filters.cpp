@@ -31,17 +31,16 @@ void blackWhite(ppm& img) {
     }
 }
 
-int filtro(int c) {
-    int x = (259*(c+255)) / (255*(259-c));
-    return x;
-}
-
 void contrast(ppm& img, float contrast) {
+    float c = (259.f*(contrast+255.f)) / (255.f*(259.f-contrast));
     for(int i = 0; i < img.height; i++) {
         for(int j = 0; j < img.width; j++) {
-            int r = filtro(img.getPixel(i, j).r - 128) + 128;
-            int g = filtro(img.getPixel(i, j).g - 128) + 128;
-            int b = filtro(img.getPixel(i, j).b - 128) + 128;
+            pixel p = img.getPixel(i, j);
+            int nr = c*(p.r-128) + 128;
+            int ng = c*(p.g-128) + 128;
+            int nb = c*(p.b-128) + 128;
+            pixel np(nr, ng, nb);
+            img.setPixel(i, j, np.truncate());
         }
     }
 }
@@ -137,15 +136,12 @@ void edgeDetection(ppm &img) {
             }
             // /*   
             temp.r = temp.r * temp.r;
-            temp.g = temp.g * temp.g;
-            temp.b = temp.b * temp.b;
             temp_d.r = temp_d.r * temp_d.r;
-            temp_d.g = temp_d.g * temp_d.g;
-            temp_d.b = temp_d.b * temp_d.b;
             np = temp.addp(temp_d);
-            np.r = sqrt(np.r);
-            np.g = sqrt(np.g);
-            np.b = sqrt(np.b);
+            int sqrt_r = sqrt(np.r);
+            np.r = sqrt_r;
+            np.g = sqrt_r;
+            np.b = sqrt_r;
             // /*
             img.setPixel(i, j, np);
         }

@@ -51,7 +51,10 @@ int main(int argc, char* argv[]) {
 		edgeDetection(img);
 	} else if(filter == "sharpen") {
 		sharpen(img);
-	} 
+	} else if (filter == "contrast") {
+		contrast(img, p1);
+	}
+	
 	cout << "Escribiendo imagen" << endl;
 	img.write(out);                      // Escribe la imagen resultante en el archivo especificado por "out"	
 	
