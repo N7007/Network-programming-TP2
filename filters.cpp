@@ -36,10 +36,10 @@ void contrast(ppm& img, float contrast) {
     for(int i = 0; i < img.height; i++) {
         for(int j = 0; j < img.width; j++) {
             pixel p = img.getPixel(i, j);
-            int nr = c*(p.r-128) + 128;
-            int ng = c*(p.g-128) + 128;
-            int nb = c*(p.b-128) + 128;
-            pixel np(nr, ng, nb);
+            int r = c*(p.r-128) + 128;
+            int g = c*(p.g-128) + 128;
+            int b = c*(p.b-128) + 128;
+            pixel np(r, g, b);
             img.setPixel(i, j, np.truncate());
         }
     }
@@ -92,7 +92,7 @@ void boxBlur(ppm &img) {
         for(int j = 1; j < img.width-1; j++) {
             pixel np;
             pixel pixels[] = {
-                img.getPixel(i - 1, j - 1), img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
+                img.getPixel(i - 1, j), img.getPixel(i - 1, j + 1),
                 img.getPixel(i, j - 1), img.getPixel(i, j), img.getPixel(i, j + 1),
                 img.getPixel(i + 1, j - 1), img.getPixel(i + 1, j), img.getPixel(i + 1, j + 1)
             };
