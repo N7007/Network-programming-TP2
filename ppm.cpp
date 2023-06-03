@@ -30,7 +30,6 @@ ppm::ppm(int _width, int _height){
     bitmap.resize(height);
     for(unsigned int i = 0; i<height;i++)
         bitmap[i].resize(width);
-
 }
 
 // Crea un objeto PPM y lo inicializa con la info de fname
@@ -38,7 +37,6 @@ ppm::ppm(const  string &fname) {
     init(0,0);
     read(fname);
 }
-
 
 // Lee la imagen PPM de fname
 void ppm::read(const  string &fname) {
