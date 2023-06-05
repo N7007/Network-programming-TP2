@@ -19,11 +19,9 @@ void boxBlur(ppm &img);                                 // implementado
 void edgeDetection(ppm &img);                           // implementado
 void sharpen(ppm &img);                                 // implementado
 void plain(ppm &img, unsigned char c);                  // implementado
-// void frame(ppm& img, pixel color, int x);
-// void zoom(ppm &img, ppm &img_zoomed, int n);
 
 // FILTROS MULTI-THREAD
-
+pixel threadsImageDivision(ppm &img, int threads);
 void multiThreadBlackWhite(ppm &img, int threads);
 void multiThreadContrast(ppm &img, float contrast, int threads);
 void multiThreadBrightness(ppm &img, float b, int start, int end, int threads);

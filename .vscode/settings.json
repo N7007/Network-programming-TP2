@@ -51,6 +51,7 @@
         "limits": "cpp",
         "numbers": "cpp",
         "semaphore": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "variant": "cpp"
     }
 }
