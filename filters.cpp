@@ -4,9 +4,12 @@
 #include <math.h>
 #include <vector>
 #include "filters.h"
+#include "ppm.h"
 #include <thread>
 #include <atomic>
 #include <cmath>
+#include <map>
+#include <variant>  
 
 #define BLACK 0
 
@@ -192,9 +195,27 @@ void sharpen(ppm &img)
 }
 
 // Multi-Threads
-pixel threadsImageDivision(ppm &img, int threads, void (*filter)(int))  {
+
+vector<ppm> threadsImageDivision(ppm &img, int threads)  {
     int pixelsPerThread = img.size / threads;
+    int threadWidth = img.width / threads;
     int restPixel = img.size % threads;
+    vector<ppm> threadImages();
+
+    map<string, vector<vector<pixel>>> map;
+
+    for (int i; i < threads; i++) {
+        vector<vector<pixel>> bitmap;
+        for (int k; k < img.height; k++) {
+            vector<pixel> pixels;
+            for (int j; i*threadWidth < j < i*threadWidth + threadWidth ; j++) {
+                pixels.push_back(img.getPixel(k, j));
+
+            }
+            bitmap.push_back(pixels);
+        } 
+        map["Thread" + to_string(i)] = bitmap;
+    }  
 }
 
 void multiThreadBlackWhite(ppm &img, int threads) {}
