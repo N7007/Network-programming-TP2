@@ -21,7 +21,7 @@ void sharpen(ppm &img);                                 // implementado
 void plain(ppm &img, unsigned char c);                  // implementado
 
 // FILTROS MULTI-THREAD
-pixel threadsImageDivision(ppm &img, int threads);
+vector<ppm> threadsImageDivision(ppm &img, int threads);
 void multiThreadBlackWhite(ppm &img, int threads);
 void multiThreadContrast(ppm &img, float contrast, int threads);
 void multiThreadBrightness(ppm &img, float b, int start, int end, int threads);
