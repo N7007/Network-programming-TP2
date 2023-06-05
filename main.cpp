@@ -75,6 +75,13 @@ int main(int argc, char *argv[])
 		{
 			contrast(img, p1);
 		}
+	} else if (nthreads > 1) {
+		vector<ppm> vecImages = threadsImageDivision(img, nthreads);
+		for (int threads; threads < nthreads; threads++) {
+			thread thread(applyFilter, img);
+		}
+	} else {
+		cout << "error bla bla 0";
 	}
 	// cout << std::thread::hardware_concurrency();
 	cout << "Escribiendo imagen" << endl;
@@ -83,3 +90,45 @@ int main(int argc, char *argv[])
 	cout << "Listo" << endl;
 	return 0;
 }
+
+// #include <iostream>
+// #include <functional>
+// #include <map>
+
+// // Declaración de funciones
+// void funcion1() {
+//     std::cout << "Llamando a la función 1" << std::endl;
+// }
+
+// void funcion2() {
+//     std::cout << "Llamando a la función 2" << std::endl;
+// }
+
+// void funcion3() {
+//     std::cout << "Llamando a la función 3" << std::endl;
+// }
+
+// int main() {
+//     std::map<std::string, std::function<void()>> funciones;
+
+//     // Asociar nombres de funciones con punteros a funciones
+//     funciones["funcion1"] = funcion1;
+//     funciones["funcion2"] = funcion2;
+//     funciones["funcion3"] = funcion3;
+
+//     // Obtener el nombre de la función desde el usuario
+//     std::string nombreFuncion;
+//     std::cout << "Ingrese el nombre de la función: ";
+//     std::cin >> nombreFuncion;
+
+//     // Buscar el nombre de la función en el mapa y llamarla si se encuentra
+//     auto iter = funciones.find(nombreFuncion);
+//     if (iter != funciones.end()) {
+//         std::function<void()> funcion = iter->second;
+//         funcion();
+//     } else {
+//         std::cout << "Función no encontrada" << std::endl;
+//     }
+
+//     return 0;
+// }

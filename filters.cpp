@@ -15,6 +15,8 @@
 
 using namespace std;
 
+void applyFilter(ppm &img)
+
 // Filtro plano como ejemplo
 void plain(ppm &img, unsigned char c)
 {
@@ -200,29 +202,63 @@ vector<ppm> threadsImageDivision(ppm &img, int threads)  {
     int pixelsPerThread = img.size / threads;
     int threadWidth = img.width / threads;
     int restPixel = img.size % threads;
-    vector<ppm> threadImages();
-
-    map<string, vector<vector<pixel>>> map;
-
-    for (int i; i < threads; i++) {
-        vector<vector<pixel>> bitmap;
-        for (int k; k < img.height; k++) {
-            vector<pixel> pixels;
-            for (int j; i*threadWidth < j < i*threadWidth + threadWidth ; j++) {
-                pixels.push_back(img.getPixel(k, j));
-
+    vector<ppm> vecImages;
+    
+    for (int thread; thread < threads; thread++) {
+        ppm threadImage(threadWidth, img.height);
+        
+        int initialPosX = threadWidth * thread;
+        for (int y; y < img.height; y++) {
+            for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++) {
+                threadImage.setPixel(y, x - initialPosX, img.getPixel(y, x));
             }
-            bitmap.push_back(pixels);
-        } 
-        map["Thread" + to_string(i)] = bitmap;
-    }  
+        }
+        vecImages.push_back(threadImage);
+    }
+    return vecImages;
 }
 
-void multiThreadBlackWhite(ppm &img, int threads) {}
-void multiThreadContrast(ppm &img, float contrast, int threads) {}
-void multiThreadBrightness(ppm &img, float b, int start, int end, int threads) {}
-void multiThreadShades(ppm &img, unsigned char shades, int threads) {}
-void multiThreadMerge(ppm &img1, ppm &img2, float alpha, int threads) {}
+void multiThreadBlackWhite(ppm &img, int thread) {
+
+    for (int image; image < vecImages.size(); image++) {
+        blackWhite(vecImages[image]);
+        int threadWidth = img.width / threads;
+        for (int thread; thread < threads; thread++) {
+            int initialPosX = threadWidth * thread;
+            for (int y; y < img.height; y++) {
+                for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++) {
+                    img.setPixel(y, x + initialPosX, vecImages[image].getPixel(y, x));
+                }
+            }
+        }
+    }
+}
+
+void multiThreadContrast(ppm &img, float contrast, int threads) {
+    vector<ppm> vecImages = threadsImageDivision(img, threads);
+    for (int image; image < vecImages.size(); image++) {
+        blackWhite(vecImages[image]);
+    }
+}
+void multiThreadBrightness(ppm &img, float b, int start, int end, int threads) {
+    vector<ppm> vecImages = threadsImageDivision(img, threads);
+    for (int image; image < vecImages.size(); image++) {
+        blackWhite(vecImages[image]);
+    }
+}
+void multiThreadShades(ppm &img, unsigned char shades, int threads) {
+    vector<ppm> vecImages = threadsImageDivision(img, threads);
+    for (int image; image < vecImages.size(); image++) {
+        blackWhite(vecImages[image]);
+    }
+}
+void multiThreadMerge(ppm &imgOne, ppm &imgTwo, float alpha, int threads) {
+    vector<ppm> vecImagesOne = threadsImageDivision(imgOne, threads);
+    vector<ppm> vecImagesTwo = threadsImageDivision(imgTwo, threads);
+    for (int image; image < vecImagesOne.size(); image++) {
+        merge(vecImagesOne[image], vecImagesTwo[image])
+    };
+}
 void multiThreadBoxBlur(ppm &img, int threads) {}
 void multiThreadEdgeDetection(ppm &img, int threads) {}
 void multiThreadSharpen(ppm &img, int threads) {}

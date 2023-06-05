@@ -52,6 +52,7 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "map": "cpp"
     }
 }
