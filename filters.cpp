@@ -9,13 +9,15 @@
 #include <atomic>
 #include <cmath>
 #include <map>
-#include <variant>  
+#include <functional>
+#include <variant>
+
+#include "filters.h"
+#include "ppm.h"
 
 #define BLACK 0
 
 using namespace std;
-
-void applyFilter(ppm &img)
 
 // Filtro plano como ejemplo
 void plain(ppm &img, unsigned char c)
@@ -23,6 +25,14 @@ void plain(ppm &img, unsigned char c)
     for (int i = 0; i < img.height; i++)
         for (int j = 0; j < img.width; j++)
             img.setPixel(i, j, pixel(c, c, c));
+}
+
+void plain(char argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    float p1 = atof(argv[3]);
+    plain(img, p1);
 }
 
 void blackWhite(ppm &img)
@@ -37,6 +47,13 @@ void blackWhite(ppm &img)
             img.setPixel(i, j, np);
         }
     }
+}
+
+void blackWhite(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    blackWhite(img);
 }
 
 void contrast(ppm &img, float contrast)
@@ -56,6 +73,14 @@ void contrast(ppm &img, float contrast)
     }
 }
 
+void contrast(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    float p1 = atof(argv[3]);
+    contrast(img, p1);
+}
+
 void brightness(ppm &img, float b, int start, int end)
 {
     for (int i = 0; i < img.height; i++)
@@ -70,6 +95,14 @@ void brightness(ppm &img, float b, int start, int end)
             img.setPixel(i, j, np.truncate());
         }
     }
+}
+
+void brightness(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    float p1 = atof(argv[3]);
+    brightness(img, p1, 0, 0);
 }
 
 void shades(ppm &img, unsigned char shades)
@@ -88,6 +121,14 @@ void shades(ppm &img, unsigned char shades)
     }
 }
 
+void shades(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    float p1 = atof(argv[3]);
+    shades(img, p1);
+}
+
 void merge(ppm &img1, ppm &img2, float alpha)
 {
 
@@ -104,6 +145,16 @@ void merge(ppm &img1, ppm &img2, float alpha)
             img1.setPixel(i, j, np);
         }
     }
+}
+
+void merge(char *argv[])
+{
+    string imgStr1(argv[4]);
+    string imgStr2(argv[7]);
+    ppm img1(imgStr1);
+    ppm img2(imgStr2);
+    float p1 = atof(argv[3]);
+    merge(img1, img2, p1);
 }
 
 void boxBlur(ppm &img)
@@ -127,6 +178,13 @@ void boxBlur(ppm &img)
             img.setPixel(i, j, np);
         }
     }
+}
+
+void boxBlur(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    boxBlur(img);
 }
 
 void edgeDetection(ppm &img)
@@ -173,6 +231,13 @@ void edgeDetection(ppm &img)
     }
 }
 
+void edgeDetection(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    edgeDetection(img);
+}
+
 void sharpen(ppm &img)
 {
     int kernel[] = {0, -1, 0, -1, 5, -1, 0, -1, 0};
@@ -196,20 +261,67 @@ void sharpen(ppm &img)
     }
 }
 
+void sharpen(char *argv[])
+{
+    string img1(argv[4]);
+    ppm img(img1);
+    sharpen(img);
+}
+
+// // Mapa de las funciones
+
+// // first create a function template
+// map<string, function<void(char[])>> filtersMap;
+
+// filtersMap["plain"] = plain;
+
+// // Definición del mapa con funciones
+// std::map<std::string, FuncPtr> functionMap;
+
+map<string, std::function<void(char *argv[])>> functionMap = {
+        {"plain", plain}
+        /*
+        {"blackWhite", blackWhite},
+        {"contrast", contrast},
+        {"brightness", brightness},
+        {"shades", shades},
+        {"merge", merge},
+        {"boxBlur", boxBlur},
+        {"edgeDetection", edgeDetection},
+        {"sharpen", sharpen}
+        */
+};
+
+// void applyFilter(string filterName, ppm &img1, ppm img2, int firstParameter)
+void applyFilter(char *argv[], map<string, function<void()>> functionMap)  //map<string, function<void()>> functionMap
+{
+    function<void(char*[])> choosenFilter = functionMap[argv[1]];
+    choosenFilter(argv[]);
+}
+
+void applyFilterMultiThread(string filterName, ppm &img, ppm img2, int p1)
+{
+    applyFilter(filterName, img, img2, p1)
+}
+
 // Multi-Threads
 
-vector<ppm> threadsImageDivision(ppm &img, int threads)  {
+vector<ppm> threadsImageDivision(ppm &img, int threads)
+{
     int pixelsPerThread = img.size / threads;
     int threadWidth = img.width / threads;
     int restPixel = img.size % threads;
     vector<ppm> vecImages;
-    
-    for (int thread; thread < threads; thread++) {
+
+    for (int thread; thread < threads; thread++)
+    {
         ppm threadImage(threadWidth, img.height);
-        
+
         int initialPosX = threadWidth * thread;
-        for (int y; y < img.height; y++) {
-            for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++) {
+        for (int y; y < img.height; y++)
+        {
+            for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++)
+            {
                 threadImage.setPixel(y, x - initialPosX, img.getPixel(y, x));
             }
         }
@@ -218,46 +330,26 @@ vector<ppm> threadsImageDivision(ppm &img, int threads)  {
     return vecImages;
 }
 
-void multiThreadBlackWhite(ppm &img, int thread) {
-
-    for (int image; image < vecImages.size(); image++) {
-        blackWhite(vecImages[image]);
-        int threadWidth = img.width / threads;
-        for (int thread; thread < threads; thread++) {
-            int initialPosX = threadWidth * thread;
-            for (int y; y < img.height; y++) {
-                for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++) {
-                    img.setPixel(y, x + initialPosX, vecImages[image].getPixel(y, x));
-                }
-            }
-        }
-    }
+void multiThreadBlackWhite(ppm &img, int thread)
+{
 }
 
-void multiThreadContrast(ppm &img, float contrast, int threads) {
+void multiThreadContrast(ppm &img, float contrast, int threads)
+{
     vector<ppm> vecImages = threadsImageDivision(img, threads);
-    for (int image; image < vecImages.size(); image++) {
+    for (int image; image < vecImages.size(); image++)
+    {
         blackWhite(vecImages[image]);
     }
 }
-void multiThreadBrightness(ppm &img, float b, int start, int end, int threads) {
-    vector<ppm> vecImages = threadsImageDivision(img, threads);
-    for (int image; image < vecImages.size(); image++) {
-        blackWhite(vecImages[image]);
-    }
+void multiThreadBrightness(ppm &img, float b, int start, int end, int threads)
+{
 }
-void multiThreadShades(ppm &img, unsigned char shades, int threads) {
-    vector<ppm> vecImages = threadsImageDivision(img, threads);
-    for (int image; image < vecImages.size(); image++) {
-        blackWhite(vecImages[image]);
-    }
+void multiThreadShades(ppm &img, unsigned char shades, int threads)
+{
 }
-void multiThreadMerge(ppm &imgOne, ppm &imgTwo, float alpha, int threads) {
-    vector<ppm> vecImagesOne = threadsImageDivision(imgOne, threads);
-    vector<ppm> vecImagesTwo = threadsImageDivision(imgTwo, threads);
-    for (int image; image < vecImagesOne.size(); image++) {
-        merge(vecImagesOne[image], vecImagesTwo[image])
-    };
+void multiThreadMerge(ppm &imgOne, ppm &imgTwo, float alpha, int threads)
+{
 }
 void multiThreadBoxBlur(ppm &img, int threads) {}
 void multiThreadEdgeDetection(ppm &img, int threads) {}

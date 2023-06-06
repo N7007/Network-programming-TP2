@@ -5,8 +5,8 @@
 #include <string>
 #include <stdlib.h>
 #include <vector>
-#include "ppm.h"
 #include <atomic>
+#include "ppm.h"
 
 // FILTROS SINGLE-THREAD
 
@@ -21,6 +21,9 @@ void sharpen(ppm &img);                                 // implementado
 void plain(ppm &img, unsigned char c);                  // implementado
 
 // FILTROS MULTI-THREAD
+
+void applyFilter();
+void applyFilterMultiThread();
 vector<ppm> threadsImageDivision(ppm &img, int threads);
 void multiThreadBlackWhite(ppm &img, int threads);
 void multiThreadContrast(ppm &img, float contrast, int threads);
