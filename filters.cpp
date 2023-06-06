@@ -325,7 +325,6 @@ map<string, function<void(char *[], int)>> functionMap = {
 void applyFilter(char *argv[], int nthreads)
 {
     string filterName = string(argv[1]);
-    int nthreads = atoi(argv[2]);
     function<void(char *[], int)> chosenFilter = functionMap[filterName];
     chosenFilter(argv, nthreads);
 }

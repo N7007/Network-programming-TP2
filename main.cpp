@@ -24,14 +24,14 @@ int main(int argc, char *argv[])
 	unsigned int nthreads = atoi(argv[2]);
 	string out = string(argv[5]);
 	//float p1 = atof(argv[3]);
-	string img1(argv[4]);
-	string img2(argv[7]);
+	string imgStrOne(argv[4]);
+	string imgStrTwo(argv[7]);
 
-	ppm img(img1);
-	ppm img2(img2);
+	ppm img(imgStrOne);
+	ppm img2(imgStrTwo);
 
-	map<string, void> map;
-	map["blackWhite"] = blackWhite;
+	//map<string, void> map;
+	//map["blackWhite"] = blackWhite;
 
 	cout << "Aplicando filtros" << endl;
 	
