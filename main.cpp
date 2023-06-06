@@ -8,7 +8,7 @@
 #include <fstream>
 #include <any>
 #include <map>
-#include <filters.cpp>
+#include "filters.cpp"
 
 using namespace std;
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	cout << "Aplicando filtros" << endl;
 	
 	applyFilter(argv, nthreads);
-	
+
 	cout << "Escribiendo imagen" << endl;
 	img.write(out); 
 
