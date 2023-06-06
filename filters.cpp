@@ -15,9 +15,31 @@
 #include "filters.h"
 #include "ppm.h"
 
-#define BLACK 0
-
 using namespace std;
+
+vector<ppm> threadsImageDivision(ppm &img, int threads, char *argv[])
+{
+    int pixelsPerThread = img.size / threads;
+    int threadWidth = img.width / threads;
+    int restPixel = img.size % threads;
+    vector<ppm> vecImages;
+
+    for (int thread; thread < threads; thread++)
+    {
+        ppm threadImage(threadWidth, img.height);
+
+        int initialPosX = threadWidth * thread;
+        for (int y; y < img.height; y++)
+        {
+            for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++)
+            {
+                threadImage.setPixel(y, x - initialPosX, img.getPixel(y, x));
+            }
+        }
+        vecImages.push_back(threadImage);
+    }
+    return vecImages;
+}
 
 // Filtro plano como ejemplo
 void plain(ppm &img, unsigned char c)
@@ -27,7 +49,7 @@ void plain(ppm &img, unsigned char c)
             img.setPixel(i, j, pixel(c, c, c));
 }
 
-void plain(char argv[])
+void plainArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -49,7 +71,7 @@ void blackWhite(ppm &img)
     }
 }
 
-void blackWhite(char *argv[])
+void blackWhiteArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -73,7 +95,7 @@ void contrast(ppm &img, float contrast)
     }
 }
 
-void contrast(char *argv[])
+void contrastArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -97,7 +119,7 @@ void brightness(ppm &img, float b, int start, int end)
     }
 }
 
-void brightness(char *argv[])
+void brightnessArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -121,7 +143,7 @@ void shades(ppm &img, unsigned char shades)
     }
 }
 
-void shades(char *argv[])
+void shadesArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -147,7 +169,7 @@ void merge(ppm &img1, ppm &img2, float alpha)
     }
 }
 
-void merge(char *argv[])
+void mergeArgv(char *argv[])
 {
     string imgStr1(argv[4]);
     string imgStr2(argv[7]);
@@ -180,7 +202,7 @@ void boxBlur(ppm &img)
     }
 }
 
-void boxBlur(char *argv[])
+void boxBlurArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -231,7 +253,7 @@ void edgeDetection(ppm &img)
     }
 }
 
-void edgeDetection(char *argv[])
+void edgeDetectionArgv(char *argv[])
 {
     string img1(argv[4]);
     ppm img(img1);
@@ -261,97 +283,49 @@ void sharpen(ppm &img)
     }
 }
 
-void sharpen(char *argv[])
+void sharpenArgv(char *argv[], int nthreads)
 {
     string img1(argv[4]);
     ppm img(img1);
-    sharpen(img);
+    //string filterName = 
+
+    if (nthreads == 1)
+    {
+        sharpen(img);
+    }
+    else if (nthreads > 1)
+    {
+        vector<ppm> vecImages = threadsImageDivision(img, nthreads);
+        for (int threads; threads < nthreads; threads++)
+        {
+            thread thread(sharpen, vecImages[threads]);
+        }
+    }
+    else
+    {
+        cout << "El número de hilos no es válido.";
+    }
 }
 
-// // Mapa de las funciones
-
-// // first create a function template
-// map<string, function<void(char[])>> filtersMap;
-
-// filtersMap["plain"] = plain;
-
-// // Definición del mapa con funciones
-// std::map<std::string, FuncPtr> functionMap;
-
-map<string, std::function<void(char *argv[])>> functionMap = {
-        {"plain", plain}
-        /*
-        {"blackWhite", blackWhite},
-        {"contrast", contrast},
-        {"brightness", brightness},
-        {"shades", shades},
-        {"merge", merge},
-        {"boxBlur", boxBlur},
-        {"edgeDetection", edgeDetection},
-        {"sharpen", sharpen}
-        */
+// Mapa de las funciones
+map<string, function<void(char *[], int)>> functionMap = {
+    /*
+    {"plain", plainArgv},
+    {"blackWhite", blackWhiteArgv},
+    {"contrast", contrastArgv},
+    {"brightness", brightnessArgv},
+    {"shades", shadesArgv},
+    {"merge", mergeArgv},
+    {"boxBlur", boxBlurArgv},
+    {"edgeDetection", edgeDetectionArgv},
+    */
+    {"sharpen", sharpenArgv}
 };
 
-// void applyFilter(string filterName, ppm &img1, ppm img2, int firstParameter)
-void applyFilter(char *argv[], map<string, function<void()>> functionMap)  //map<string, function<void()>> functionMap
+void applyFilter(char *argv[], int nthreads)
 {
-    function<void(char*[])> choosenFilter = functionMap[argv[1]];
-    choosenFilter(argv[]);
+    string filterName = string(argv[1]);
+    int nthreads = atoi(argv[2]);
+    function<void(char *[], int)> chosenFilter = functionMap[filterName];
+    chosenFilter(argv, nthreads);
 }
-
-void applyFilterMultiThread(string filterName, ppm &img, ppm img2, int p1)
-{
-    applyFilter(filterName, img, img2, p1)
-}
-
-// Multi-Threads
-
-vector<ppm> threadsImageDivision(ppm &img, int threads)
-{
-    int pixelsPerThread = img.size / threads;
-    int threadWidth = img.width / threads;
-    int restPixel = img.size % threads;
-    vector<ppm> vecImages;
-
-    for (int thread; thread < threads; thread++)
-    {
-        ppm threadImage(threadWidth, img.height);
-
-        int initialPosX = threadWidth * thread;
-        for (int y; y < img.height; y++)
-        {
-            for (int x = initialPosX; x < initialPosX + threadWidth, x < threadWidth; x++)
-            {
-                threadImage.setPixel(y, x - initialPosX, img.getPixel(y, x));
-            }
-        }
-        vecImages.push_back(threadImage);
-    }
-    return vecImages;
-}
-
-void multiThreadBlackWhite(ppm &img, int thread)
-{
-}
-
-void multiThreadContrast(ppm &img, float contrast, int threads)
-{
-    vector<ppm> vecImages = threadsImageDivision(img, threads);
-    for (int image; image < vecImages.size(); image++)
-    {
-        blackWhite(vecImages[image]);
-    }
-}
-void multiThreadBrightness(ppm &img, float b, int start, int end, int threads)
-{
-}
-void multiThreadShades(ppm &img, unsigned char shades, int threads)
-{
-}
-void multiThreadMerge(ppm &imgOne, ppm &imgTwo, float alpha, int threads)
-{
-}
-void multiThreadBoxBlur(ppm &img, int threads) {}
-void multiThreadEdgeDetection(ppm &img, int threads) {}
-void multiThreadSharpen(ppm &img, int threads) {}
-void multiThreadPlain(ppm &img, unsigned char c, int threads) {}
