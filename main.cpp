@@ -20,11 +20,11 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	// string filter = string(argv[1]);
+	string filter = string(argv[1]);
 	unsigned int nthreads = atoi(argv[2]);
-	string out = string(argv[5]);
-	//float p1 = atof(argv[3]);
+	float p1 = atof(argv[3]);
 	string imgStrOne(argv[4]);
+	string out = string(argv[5]);
 	string imgStrTwo(argv[7]);
 
 	ppm img(imgStrOne);
